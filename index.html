@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SprintDroop | Услуги</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 20px;
+    background: #050008;
+    overflow-x: hidden;
+  }
+
+  /* Фоновая картинка */
+  .bg {
+    position: fixed;
+    inset: 0;
+    background: url('image.jpg') center/cover no-repeat;
+    z-index: -2;
+  }
+  .bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(20,0,40,0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* Контейнер для падающих элементов */
+  #snow-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  /* Общее для падающих элементов */
+  .falling {
+    position: absolute;
+    top: -50px;
+    user-select: none;
+    pointer-events: none;
+    animation: fall linear forwards;
+  }
+
+  .snow {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(200, 200, 255, 0.9), 0 0 16px rgba(150, 100, 255, 0.6);
+    filter: drop-shadow(0 0 6px rgba(200, 200, 255, 0.7));
+  }
+
+  .heart {
+    filter: drop-shadow(0 0 8px rgba(255, 60, 150, 0.75));
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(110vh) rotate(25deg);
+      opacity: 0;
+    }
+  }
+
+  /* Карточка */
+  .card {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 520px;
+    background: rgba(10, 0, 20, 0.72);
+    border: 1px solid rgba(255, 0, 0, 0.35);
+    border-radius: 24px;
+    padding: 28px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(150, 0, 200, 0.35);
+    animation: appear .8s cubic-bezier(.2,.8,.3,1) both;
+    transform: translateY(-20px);
+  }
+
+  @keyframes appear {
+    from { opacity: 0; transform: translateY(15px) scale(.96); }
+    to   { opacity: 1; transform: translateY(-20px) scale(1); }
+  }
+
+  h1 {
+    color: #fff;
+    font-size: 36px;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px #ff0000, 0 0 22px #ff0033, 0 0 44px #8a2be2;
+    font-family: Impact, 'Arial Black', sans-serif;
+  }
+
+  /* Владелец */
+  .owner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 14px;
+    margin-bottom: 22px;
+    letter-spacing: .5px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .owner b {
+    color: #ff5577;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(255, 85, 120, 0.8);
+  }
+
+  /* Услуги */
+  .services {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 22px;
+    text-align: left;
+  }
+
+  .service {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 15px;
+    transition: .25s;
+  }
+  .service:hover {
+    background: rgba(138, 43, 226, 0.2);
+    border-color: rgba(255, 0, 0, 0.4);
+    transform: translateX(4px);
+  }
+  .service .icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 28px;
+    text-align: center;
+  }
+
+  /* Кнопки Telegram */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px 22px;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: .25s;
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+
+  .btn-tg {
+    background: linear-gradient(135deg, #8a2be2, #2AABEE);
+    box-shadow: 0 10px 28px rgba(138, 43, 226, 0.5);
+  }
+  .btn-tg:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(138, 43, 226, 0.8);
+    background: linear-gradient(135deg, #9d4edd, #229ED9);
+  }
+
+  .btn-channel {
+    background: linear-gradient(135deg, #229ED9, #8a2be2);
+    box-shadow: 0 10px 28px rgba(34, 158, 217, 0.5);
+  }
+  .btn-channel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(34, 158, 217, 0.8);
+    background: linear-gradient(135deg, #2AABEE, #9d4edd);
+  }
+
+  .btn:active { transform: translateY(-1px); }
+  .btn svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+
+  .btn-note {
+    display: block;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 12.5px;
+    font-style: italic;
+    margin: 4px 0 14px;
+    line-height: 1.4;
+  }
+  .btn-note b {
+    color: #ff5577;
+    font-style: normal;
+  }
+
+  /* Кнопка музыки */
+  .music-btn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 0, 0, 0.4);
+    background: rgba(20, 0, 30, 0.6);
+    backdrop-filter: blur(12px);
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: .25s;
+    z-index: 50;
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.5);
+  }
+  .music-btn:hover { background: rgba(138, 43, 226, 0.4); transform: scale(1.08); }
+  .music-btn.playing { animation: pulse 1.6s infinite; border-color: #ff0000; }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.6); }
+    50%     { box-shadow: 0 0 0 14px rgba(255, 0, 0, 0); }
+  }
+
+  /* Стартовый экран */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 0, 10, 0.96);
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 100;
+    transition: opacity .6s, visibility .6s;
+    text-align: center;
+    padding: 24px;
+  }
+  .overlay.hide { opacity: 0; visibility: hidden; }
+
+  .overlay h2 {
+    color: #fff;
+    font-size: 30px;
+    font-weight: 700;
+    text-shadow: 0 0 12px #ff0000, 0 0 30px #8a2be2;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: Impact, 'Arial Black', sans-serif;
+  }
+  .overlay small {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .enter-btn {
+    padding: 18px 50px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #ff0033, #8a2be2);
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+    box-shadow: 0 12px 35px rgba(255, 0, 51, 0.5), 0 0 30px rgba(138, 43, 226, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .enter-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 18px 45px rgba(255, 0, 51, 0.7), 0 0 45px rgba(138, 43, 226, 0.8);
+  }
+  .enter-btn:active { transform: translateY(-1px) scale(1.02); }
+
+  @media (max-width: 420px) {
+    body { padding: 24px 14px 14px; }
+    .card { padding: 20px; border-radius: 20px; }
+    h1 { font-size: 28px; }
+    .service { font-size: 14px; padding: 10px 12px; }
+    .btn { font-size: 15px; padding: 13px 18px; }
+    .overlay h2 { font-size: 24px; }
+    .enter-btn { font-size: 16px; padding: 16px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div id="snow-container"></div>
+
+<!-- ===== СТАРТОВЫЙ ЭКРАН ===== -->
+<div class="overlay" id="overlay">
+  <h2>🎵 SprintDroop</h2>
+  <small>Нажмите, чтобы войти</small>
+  <button class="enter-btn" id="enterBtn">Войти</button>
+</div>
+
+<!-- Кнопка музыки -->
+<button class="music-btn" id="musicBtn" title="Вкл/выкл музыку">🔇</button>
+
+<!-- Файл музыки должен называться music.mp3 -->
+<audio id="audio" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- ===== КАРТОЧКА ===== -->
+<main class="card">
+  <h1>SprintDroop</h1>
+  <p class="owner">Владелец: <b>@LiwSkm</b></p>
+
+  <div class="services">
+    <div class="service"><span class="icon">🌐</span> Создание сайтов</div>
+    <div class="service"><span class="icon">📱</span> Разработка Telegram-проектов</div>
+    <div class="service"><span class="icon">🤖</span> Написание Telegram-ботов и программ</div>
+    <div class="service"><span class="icon">🕵️</span> Услуги OSINT / Validat</div>
+  </div>
+
+  <!-- Кнопка: написать в TG владельцу -->
+  <a class="btn btn-tg" href="https://t.me/LiwSkm" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+    Написать в Telegram
+  </a>
+  <span class="btn-note">(написать лично — <b>@LiwSkm</b>)</span>
+
+  <!-- Кнопка: подписаться на ТГК -->
+  <a class="btn btn-channel" href="https://t.me/ForevoSpt" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-.99.53-1.42.52-.46-.01-1.36-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.36-.49 1-.74 3.9-1.7 6.5-2.82 7.8-3.36 3.71-1.54 4.48-1.81 4.98-1.82.11 0 .36.03.52.16.14.11.18.27.19.38-.01.08.01.22-.01.35z"/></svg>
+    Подписаться на ТГК
+  </a>
+  <span class="btn-note">(тут интереснее — <b>@ForevoSpt</b>)</span>
+</main>
+
+<script>
+  const audio    = document.getElementById('audio');
+  const musicBtn = document.getElementById('musicBtn');
+  const overlay  = document.getElementById('overlay');
+  const enterBtn = document.getElementById('enterBtn');
+
+  audio.volume = 0.5;
+  let musicOn = false;
+
+  function startMusic() {
+    audio.play().then(() => {
+      musicOn = true;
+      musicBtn.textContent = '🔊';
+      musicBtn.classList.add('playing');
+    }).catch(() => {
+      musicBtn.textContent = '🔇';
+    });
+  }
+
+  // Кнопка "Войти" — запускает музыку и скрывает стартовый экран
+  enterBtn.addEventListener('click', () => {
+    startMusic();
+    overlay.classList.add('hide');
+  });
+
+  // Переключатель музыки
+  musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (musicOn) {
+      audio.pause();
+      musicOn = false;
+      musicBtn.textContent = '🔇';
+      musicBtn.classList.remove('playing');
+    } else {
+      startMusic();
+    }
+  });
+
+  // --- Сердечки + снежинки ---
+  const container = document.getElementById('snow-container');
+  const hearts = ['❤️', '💖', '💗', '💓', '💕', '💘', '🩷'];
+  const snows  = ['❅', '❆', '❄', '✼', '❉', '✻', '❋'];
+
+  function spawnHearts() {
+    const el = document.createElement('div');
+    el.classList.add('falling', 'heart');
+    el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+
+    const size = Math.random() * 18 + 14;
+    el.style.fontSize = size + 'px';
+    el.style.left = Math.random() * 100 + 'vw';
+
+    // Медленное падение сердечек: 12–22 секунды
+    const duration = Math.random() * 10 + 12;
+    el.style.animationDuration = duration + 's';
+    el.style.opacity = Math.random() * 0.5 + 0.5;
+    el.style.animationDelay = (Math.random() * 1.2) + 's';
+
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (duration + 2) * 1000);
+  }
+
+  function spawnSnow() {
+    const el = document.createElement('div');
+    el.classList.add('falling', 'snow');
+    el.textContent = snows[Math.floor(Math.random() * snows.length)];
+
+    const size = Math.random() * 14 + 10;
+    el.style.fontSize = size + 'px';
+    el.style.left = Math.random() * 100 + 'vw';
+
+    // Снежинки чуть быстрее: 7–14 секунд
+    const duration = Math.random() * 7 + 7;
+    el.style.animationDuration = duration + 's';
+    el.style.opacity = Math.random() * 0.5 + 0.4;
+    el.style.animationDelay = (Math.random() * 0.8) + 's';
+
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (duration + 2) * 1000);
+  }
+
+  // Снежинки появляются чаще, сердечки — реже (спокойный поток)
+  setInterval(spawnSnow, 250);
+  setInterval(spawnHearts, 700);
+</script>
+
+</body>
+</html>
